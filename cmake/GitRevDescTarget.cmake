@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.3)
+
 if(__git_rev_desc_target)
 	return()
 endif()
