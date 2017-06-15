@@ -1,6 +1,8 @@
-# CMake-Git-Version
+# git-rev-desc-target
 
 This code exists to allow one to define a version file for your project based on output from git-describe.
+
+The version file contains the git hash, git-describe message, last tag, and whether the working tree is dirty.
 
 # Installation
 
