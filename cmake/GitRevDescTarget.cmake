@@ -8,7 +8,7 @@ set(__git_rev_desc_target YES)
 # We must run the following at "include" time, not at function call time,
 # to find the path to this module rather than the path to a calling list file
 get_filename_component(_thismoduledir ${CMAKE_CURRENT_LIST_FILE} PATH)
-message("_thismoduledir: ${_thismoduledir}")
+#message("_thismoduledir: ${_thismoduledir}")
 
 #----------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ endfunction()
 
 function(create_version_header_template version_header_template)
   # Create template file
-  message("creating: ${version_header_template}")
+  #message("creating: ${version_header_template}")
   file(WRITE ${version_header_template}
     "
     \#define GIT_REFSPEC \"@GIT_REFSPEC@\"\n
@@ -158,7 +158,7 @@ endfunction()
 
 
 function(create_version_cmake_script version_header_template version_header version_cmake_script)
-  message("creating: ${version_cmake_script}")
+  #message("creating: ${version_cmake_script}")
   file(WRITE ${version_cmake_script}
     "
     include(${_thismoduledir}/GitRevDescTarget.cmake)
@@ -168,32 +168,30 @@ function(create_version_cmake_script version_header_template version_header vers
     git_get_exact_tag(GIT_TAG)
     git_local_changes(GIT_LOCAL_CHANGES)
 
-    message(\"configuring: ${version_header}\")
+    #message(\"configuring: ${version_header}\")
     configure_file(${version_header_template} ${version_header} @ONLY)
     ")
 endfunction()
 
 
-function(add_git_version_library version_target version_header)
+function(add_git_revision_library target version_header)
 
-  set(version_header_template ${CMAKE_CURRENT_BINARY_DIR}/${version_target}.h.in)
-  set(version_cmake_script ${CMAKE_CURRENT_BINARY_DIR}/${version_target}.cmake)
+  set(version_header_template ${CMAKE_CURRENT_BINARY_DIR}/${target}.h.in)
+  set(version_cmake_script ${CMAKE_CURRENT_BINARY_DIR}/${target}.cmake)
 
   create_version_header_template(${version_header_template})
-  create_version_cmake_script(${version_header_template} ${version_target}/${version_header} ${version_cmake_script})
+  create_version_cmake_script(${version_header_template} ${target}/${version_header} ${version_cmake_script})
 
-  # This target is always out-of-date and will be regenerated every build.
-  message("adding: ${version_target}_generated")
-  add_custom_target(
-      ${version_target}_generated
-      ${CMAKE_COMMAND}
-      -P ${version_cmake_script}
-  )
+  # This target is always out-of-date and will be regenerated every build, ensuring you have the
+  # most up-to-date information. If the contents of the file do not change the file will not
+  # be touched so unnecessary rebuilds of dependent targets won't occur.
+  #message("adding: ${target}_header")
+  add_custom_target(${target}_header ${CMAKE_COMMAND} -P ${version_cmake_script})
 
-  # This is the libary target to which you will link
-  message("adding: ${version_target} (${version_header})")
-  add_library(${version_target} INTERFACE)
-  target_include_directories(${version_target} INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/${version_target})
-  add_dependencies(${version_target} ${version_target}_generated)
+  # This is the libary target to which you will link.
+  #message("adding: ${target} (${version_header})")
+  add_library(${target} INTERFACE)
+  target_include_directories(${target} INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/${target})
+  add_dependencies(${target} ${target}_header)
 endfunction()
 

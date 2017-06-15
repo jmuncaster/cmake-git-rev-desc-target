@@ -1,4 +1,4 @@
-#include "my_test/my_version.h"
+#include "my_app_git_rev.h"
 
 #include <iostream>
 
