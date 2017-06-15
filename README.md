@@ -35,3 +35,6 @@ int main() {
 }
 ```
 
+# Credits
+
+The revision parsing code is based on code from this excellent collection of cmake modules: https://github.com/rpavlik/cmake-modules
