@@ -1,4 +1,4 @@
-#include "version.h"
+#include "my_test/my_version.h"
 
 #include <iostream>
 
